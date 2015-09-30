@@ -34,7 +34,7 @@ public class Principal extends Application{
                     close = true;
                     break;
                 case 2:
-                    
+                    dialogos.registrarUsuario();
                     break;
             }
         }

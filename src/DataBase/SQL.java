@@ -16,6 +16,11 @@ public class SQL {
     Connection connection;
     
     public SQL(){
+        bd = "usuarios";
+        login = "Java";
+        password = "wepo";
+        url = "jdbc:mysql://localhost/"+bd;
+        
         try{
             //Obtenemos el driver para mysql
             Class.forName("com.mysql.jdbc.Driver");

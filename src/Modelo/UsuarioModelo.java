@@ -1,84 +1,136 @@
 
 package Modelo;
 
+import javafx.beans.property.SimpleStringProperty;
 import util.Utilities;
 
 /**
  *
  * @author Jorge Alan Villalon Perez   
  */
-public class UsuarioModelo {
-    private String usuario;
-    private String clave;
-    private String nombre;
-    private String apellido;
-    private String correo;
-    private String fechaNacimiento;
-    private String lugarNacimiento;
-    
+public class UsuarioModelo {    
+    private final SimpleStringProperty usuario;
+    private final SimpleStringProperty clave;
+    private final SimpleStringProperty nombre;
+    private final SimpleStringProperty apellido;
+    private final SimpleStringProperty correo;
+    private final SimpleStringProperty fechaNacimiento;
+    private final SimpleStringProperty lugarNacimiento;
+
     public UsuarioModelo(String usuario, String clave, String nombre, String apellido, String correo, String fechaNacimiento, String lugarNacimiento){
-        setUsuario(usuario);
-        setClave(clave);
-        setNombre(nombre);
-        setApellido(apellido);
-        setCorreo(correo);
-        setFechaNacimiento(fechaNacimiento);
-        setLugarNacimiento(lugarNacimiento);
+        this.usuario = new SimpleStringProperty(usuario);
+        this.clave = new SimpleStringProperty(clave);
+        this.nombre = new SimpleStringProperty(nombre);
+        this.apellido = new SimpleStringProperty(apellido);
+        this.correo = new SimpleStringProperty(correo);
+        this.fechaNacimiento = new SimpleStringProperty(fechaNacimiento);
+        this.lugarNacimiento = new SimpleStringProperty(lugarNacimiento);
     }
     
     public void setUsuario(String usuario){
-        this.usuario = usuario;
+        this.usuario.set(usuario);
     }
     
     public String getUsuario(){
-        return usuario;
+        return usuario.get();
     }
     
     public void setClave(String clave){
-        this.clave = Utilities.cifrarDatos(clave);
+        this.clave.set(clave);
     }
     
     public String getClave(){
-        return clave;
+        return clave.get();
     }
     
     public void setNombre(String nombre){
-        this.nombre = nombre;
+        this.nombre.set(nombre);
     }
     
     public String getNombre(){
-        return nombre;
+        return nombre.get();
     }
     
     public void setApellido(String apellido){
-        this.apellido = apellido;
+        this.apellido.set(apellido);
     }
     
     public String getApellido(){
-        return apellido;
+        return apellido.get();
     }
     
     public void setCorreo(String correo){
-        this.correo = correo;
+        this.correo.set(correo);
     }
     
     public String getCorreo(){
-        return correo;
+        return correo.get();
     }
     
-    public void setFechaNacimiento(String fechaNacimiento){
-        this.fechaNacimiento = fechaNacimiento;
+    public void setFechaNacimiento(String fecha){
+        fechaNacimiento.set(fecha);
     }
     
-    public String getFechNacimiento(){
-        return fechaNacimiento;
+    public String getFechaNacimiento(){
+        return fechaNacimiento.get();
     }
     
-    public void setLugarNacimiento(String lugarNacimiento){
-        this.lugarNacimiento = lugarNacimiento;
+    public void lugarNacimiento(String lugar){
+        lugarNacimiento.set(lugar);
     }
     
     public String getLugarNacimiento(){
+        return lugarNacimiento.get();
+    }
+    
+    /**
+     * @return the usuarioS
+     */
+    public SimpleStringProperty getUsuarioS() {
+        return usuario;
+    }
+
+    /**
+     * @return the claveS
+     */
+    public SimpleStringProperty getClaveS() {
+        return clave;
+    }
+
+    /**
+     * @return the nombreS
+     */
+    public SimpleStringProperty getNombreS() {
+        return nombre;
+    }
+
+    /**
+     * @return the apellidoS
+     */
+    public SimpleStringProperty getApellidoS() {
+        return apellido;
+    }
+
+    /**
+     * @return the correoS
+     */
+    public SimpleStringProperty getCorreoS() {
+        return correo;
+    }
+
+    /**
+     * @return the fechaNacimientoS
+     */
+    public SimpleStringProperty getFechaNacimientoS() {
+        return fechaNacimiento;
+    }
+
+    /**
+     * @return the lugarNacimientoS
+     */
+    public SimpleStringProperty getLugarNacimientoS() {
         return lugarNacimiento;
     }
+
+    
 }
