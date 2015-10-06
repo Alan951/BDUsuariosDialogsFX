@@ -25,6 +25,44 @@ public class UsuarioDAO {
         }
     }
     
+    public boolean comprobarUsuario(String nombre){
+        SQL conex = new SQL();
+        boolean existe = false;
+        try{
+            PreparedStatement consulta = conex.getConnection().prepareStatement("SELECT * FROM usuarios WHERE BINARY usuario = ?");
+            consulta.setString(1, nombre);
+            ResultSet res = consulta.executeQuery();
+            while(res.next()){
+                existe = true;
+            }
+            res.close();
+            consulta.close();
+            conex.desconectar();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return existe;
+    }
+    
+    public boolean comrpobarCorreo(String correo){
+        SQL conex = new SQL();
+        boolean existe = false;
+        try{
+            PreparedStatement consulta = conex.getConnection().prepareStatement("SELECT * FROM usuarios WHERE correo = ?");
+            consulta.setString(1, correo);
+            ResultSet res = consulta.executeQuery();
+            while(res.next()){
+                existe = true;
+            }
+            res.close();
+            consulta.close();
+            conex.desconectar();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return existe;
+    }
+    
     public ArrayList<UsuarioModelo> listaDeUsuarios(){
         ArrayList<UsuarioModelo> usuariosRegistrados = new ArrayList<UsuarioModelo>();
         SQL conex = new SQL();

@@ -7,7 +7,9 @@ package Dialogs;
 import DataBase.UsuarioDAO;
 import Modelo.UsuarioModelo;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -100,7 +102,7 @@ public class Dialogos {
     }
     
     //Dialogos completamente modificado.
-    public void registrarUsuario(){
+    public UsuarioModelo registrarUsuario(UsuarioModelo user){
         Dialog<ButtonType> dialog = new Dialog<>();
         //Establecer titulo y el headerText
         dialog.setTitle("Registrar usuario");
@@ -119,8 +121,6 @@ public class Dialogos {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 50, 10, 10));
-        
-        
         
         TextField txtUsuario = new TextField();
         PasswordField txtPassword = new PasswordField();
@@ -147,7 +147,6 @@ public class Dialogos {
         DatePicker calendario = new DatePicker();
         calendario.setPromptText("dd/mm/aaaa");
         
-        
         //Establecer componentes en el grid
         grid.add(lblUsuario, 0, 0);
         grid.add(txtUsuario, 1, 0);
@@ -170,71 +169,69 @@ public class Dialogos {
 
         //Establecer boton
         Node btnTypeRegistrar = dialog.getDialogPane().lookupButton(btnRegistrar);
-        btnTypeRegistrar.setDisable(true);
+        btnTypeRegistrar.setDisable(false);
 
-        //Comprobar campos
-        /*
-            Hice este objeto "BooleanPropertyBase para
-            agregarle a un boolean un listener, si el valor cambia a 
-            true entonces el boton Registrar podra ser clickeable
-            si cambia su valor a false no podra clickearse el boton de registrarse
-            hasta que llene todos los datos
-        */
-        BooleanPropertyBase boo = new BooleanPropertyBase() {
+        //En caso de que el parametro no sea nulo establecer texto
 
-            @Override
-            public Object getBean() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public String getName() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-        
-        txtUsuario.textProperty().addListener((observable, oldValue, newValue) ->{
-            boo.set(newValue.trim().isEmpty());
-        });
-        txtPassword.textProperty().addListener((observable, oldValue, newValue) ->{
-            boo.set(newValue.trim().isEmpty());
-        });
-        txtNombre.textProperty().addListener((observable, oldValue, newValue) ->{
-            boo.set(newValue.trim().isEmpty());
-        });
-        txtApellido.textProperty().addListener((observable, oldValue, newValue) ->{
-           boo.set(newValue.trim().isEmpty());
-        });
-        txtCorreo.textProperty().addListener((observable, oldValue, newValue) ->{
-            boo.set(newValue.trim().isEmpty());
-        });
-        calendario.valueProperty().addListener((observable, oldValue, newValue) ->{
-            if(newValue != null){
-                boo.set(true);
-            }else{
-                boo.set(false);
-            }
-        });
-        txtLugarNacimiento.textProperty().addListener((observable, oldValue, newValue) ->{
-            boo.set(newValue.trim().isEmpty());
-        });
-
-        boo.addListener((observable, oldValue, newValue) -> {
-            if(newValue){
-                btnTypeRegistrar.setDisable(false);
-            }else{
-                btnTypeRegistrar.setDisable(true);
-            }
-        });
-        //Fin de la comprobacion de campos
-        
+        if(user != null){
+            txtUsuario.setText(user.getUsuario());
+            txtPassword.setText(user.getClave());
+            txtNombre.setText(user.getNombre());
+            txtApellido.setText(user.getApellido());
+            txtCorreo.setText(user.getCorreo());
+            txtLugarNacimiento.setText(user.getLugarNacimiento()); 
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyy-MM-dd");
+            DateTimeFormatter formatVIEW = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            System.out.println(user.getFechaNacimiento());
+            LocalDate date = user.getFechaNacimiento() == null ? null : LocalDate.parse(user.getFechaNacimiento(), format);
+            calendario.setValue(date);
+        }
         Optional<ButtonType> result = dialog.showAndWait();
-        if(result.get().equals(btnRegistrar)){
-            System.out.println(calendario.getValue().toString());
-            UsuarioModelo usuario = new UsuarioModelo(txtUsuario.getText(), txtPassword.getText(), txtNombre.getText(), txtApellido.getText(), txtCorreo.getText(), calendario.getValue().toString(), txtLugarNacimiento.getText());
-            UsuarioDAO dao = new UsuarioDAO();
-            dao.registrarUsuario(usuario);
+        if(result.get().equals(btnRegistrar)){    
+            UsuarioModelo usuario = new UsuarioModelo(txtUsuario.getText(), txtPassword.getText(), txtNombre.getText(), txtApellido.getText(), txtCorreo.getText(), calendario.getValue() == null ? null : calendario.getValue().toString(), txtLugarNacimiento.getText());
+            return usuario;
+        }else{
+            return null;
         }
     }
     
+    public boolean comprobarDatos(UsuarioModelo usuario){
+        UsuarioDAO dao = new UsuarioDAO();
+        String error = "";
+        
+        if(dao.comprobarUsuario(usuario.getUsuario()))
+            error += "El usuario se encuentra registrado\n";
+        if(dao.comrpobarCorreo(usuario.getCorreo()))
+            error += "El correo ya se encuentra registrado\n";
+        
+        
+        if(error.equals("")){
+            return false;
+        }else{
+            //Mostrar dialogo del error
+            System.out.println("Datos corruptos");
+            Alert alerta = new Alert(AlertType.ERROR);
+            alerta.setTitle("Ops, ocurrio un error.");
+            alerta.setHeaderText("Ocurrio un problema al registrar los datos.");
+            alerta.setContentText(error);
+            alerta.showAndWait();
+            return true;
+        }
+    }
+    
+    public void registroCompletado(String usuario){
+        Alert alerta = new Alert(AlertType.CONFIRMATION);
+        alerta.setTitle("Registro completado.");
+        alerta.setHeaderText("Se han registrado los datos con exito.");
+        alerta.setContentText("El usuario: "+usuario+" ha sido registrado con exito!");
+        alerta.showAndWait();
+    }
+    
+    public void errorAlComrpobarFields(){
+        Alert alerta = new Alert(AlertType.ERROR);
+        alerta.setTitle("Ops, ocurrio un error.");
+        alerta.setHeaderText("Ocurrio un problema al comprobar los datos.");
+        alerta.setContentText("Verifica que todos los campos esten llenados correctamente.");
+        alerta.showAndWait();
+    }
 }
